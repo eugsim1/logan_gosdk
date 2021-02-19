@@ -1,0 +1,110 @@
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"github.com/oracle/oci-go-sdk/v35/common"
+	_"github.com/oracle/oci-go-sdk/v35/example/helpers"
+	_"github.com/oracle/oci-go-sdk/v35/identity"
+	"github.com/oracle/oci-go-sdk/v35/loganalytics"
+	_"github.com/oracle/oci-go-sdk/v35/managementdashboard"
+	"io/ioutil"
+	_ "log"
+ 
+	"os"
+ 
+)
+
+var (
+	e1 = common.CustomProfileConfigProvider("/home/oracle/.oci/config", "DBSECN")
+	namespace = "frnj6sfkc1ep"
+	ocid = "ocid1.compartment.oc1..aaaaaaaazp6q3bxptt4y6tyv3y2zp7fin4fu37qunhmgarpa22aamsu45nwq"
+	OpcMetaLoggrpid = "ocid1.loganalyticsloggroup.oc1.eu-frankfurt-1.amaaaaaaufnzx7iaz7gcgzssuy4kudg66megumpmysnvsywp2ri3vtgr44va"
+	Entityocid = "ocid1.loganalyticsentity.oc1.eu-frankfurt-1.amaaaaaaufnzx7iagq4yzb2o6tuwtddbkgy2vbbwltu5mjmnow6623bckxna"
+)
+
+func UploadLogFile(namespace string, ocid string, OpcMetaLoggrpid string, Entityocid string) {
+	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)
+
+	type Entity struct {
+		Directory       string `json:"directory"`
+		Name            string `json:"name"`
+		Type            string `json:"type"`
+		Upload_Name     string `json:"upload_name"`
+		LogSourceName   string `json:"logSourceName"`
+		Invalidatecache bool   `json:"invalidatecache"`
+	}
+
+	type Entities struct {
+		Entities []Entity `json:"entities"`
+	}
+
+	jsonFile, err := os.Open("entities.json")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var entities Entities
+	if err := json.Unmarshal(byteValue, &entities); err != nil {
+		panic(err)
+	}
+
+	for i := 0; i < len(entities.Entities); i++ {
+		files, err := ioutil.ReadDir(entities.Entities[i].Directory)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		for _, f := range files {
+			if f.Name() != "config.properties" {
+				fmt.Println(f.Name())
+				 
+				var fileName string = f.Name()
+
+				content, err := os.Open(entities.Entities[i].Directory + "/" + f.Name())
+				if err != nil {
+					fmt.Println(err)
+				}
+
+               fmt.Printf("%s %s %s %s %s %s\n",namespace,entities.Entities[i].Upload_Name,entities.Entities[i].LogSourceName, fileName, OpcMetaLoggrpid, entities.Entities[i].Type)
+
+				UploadLogFileRequest := loganalytics.UploadLogFileRequest{
+					NamespaceName:     &namespace,
+					UploadName:        &entities.Entities[i].Upload_Name,
+					LogSourceName:     &entities.Entities[i].LogSourceName,
+					Filename:          &fileName,
+					OpcMetaLoggrpid:   &OpcMetaLoggrpid,
+					EntityId:          &Entityocid,
+					InvalidateCache:   &entities.Entities[i].Invalidatecache,
+					UploadLogFileBody: ioutil.NopCloser(content),
+				}
+
+				resp, err := client.UploadLogFile(context.Background(), UploadLogFileRequest)
+				if err != nil {
+					fmt.Println("Error UploadLogFile:", err)
+					//return
+				} 
+				fmt.Println(resp) 
+			}
+		}
+	}
+}
+
+func process_ocids(ocid string, ocid_name string,namespace string) {
+	UploadLogFile(namespace, ocid, OpcMetaLoggrpid,Entityocid)
+	return
+}
+
+func main() {
+	ocid, _ := e1.TenancyOCID()
+    process_ocids(ocid, "analytics000", namespace )
+
+}

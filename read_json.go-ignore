@@ -1,0 +1,72 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	_ "log"
+	"os"
+
+)
+
+func main() {
+
+	type Entity struct {
+		Directory       string `json:"directory"`
+		Name            string `json:"name"`
+		Type            string `json:"type"`
+		Upload_Name     string `json:"upload_name"`
+		LogSourceName   string `json:"logSourceName"`
+		Invalidatecache bool `json:"invalidatecache"`
+	}
+
+	type Entities struct {
+		Entities []Entity `json:"entities"`
+	}
+
+
+	jsonFile, err := os.Open("entities.json")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		fmt.Println(err)
+	}
+	if !json.Valid(byteValue) {
+		fmt.Printf("JSON is not valid: %s", byteValue)
+		os.Exit(1)
+	}
+
+	var entities Entities
+
+	if err := json.Unmarshal(byteValue, &entities); err != nil {
+		panic(err)
+	}
+
+
+	fmt.Printf("%d\n", len(entities.Entities))
+
+	for i := 0; i < len(entities.Entities); i++ {
+
+        fmt.Printf("%s\n", entities.Entities[i].Directory)
+		files, err := ioutil.ReadDir(entities.Entities[i].Directory)
+
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		for _, f := range files {
+			fmt.Println(f.Name())
+			content,err := os.Open(entities.Entities[i].Directory+"/"+f.Name())
+			if err != nil {
+				fmt.Println(err)
+			}
+			ioutil.NopCloser(content)
+		}
+	}
+
+}

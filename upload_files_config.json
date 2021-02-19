@@ -1,0 +1,46 @@
+{
+"entities" : [
+{ 
+  "directory" : "/home/oracle/gocode/src/oracle-oci/logs/db",
+  "name" : "db1",  
+  "type"  : "omc_oracle_db_instance",
+  "upload_name" : "lg_analytics_test_drive",
+  "logSourceName" : "Database Alert Logs",
+    "invalidatecache" : true  },
+{ 
+  "directory": "/home/oracle/gocode/src/oracle-oci/logs/syslog",
+   "name" : "dbhost1.oracle.com",  
+   "type"  : "omc_host_linux",
+   "upload_name" : "lg_analytics_test_drive"   ,
+  "logSourceName" : "Linux Syslog Logs" ,
+  "invalidatecache" : true  },
+{ 
+  "directory" : "/home/oracle/gocode/src/oracle-oci/logs/F5",
+  "name" : "bigip-ltm-dmz1.oracle.com",
+   "type"  : "omc_host_linux",   
+   "upload_name" : "lg_analytics_test_drive"   ,
+  "logSourceName" : "F5 Big IP Logs"  ,
+    "invalidatecache" : true  },  
+{ 
+   "directory" : "/home/oracle/gocode/src/oracle-oci/logs/juniper", 
+   "name" : "srx-test.oracle.com",    
+   "type" : "omc_host_linux",          
+   "upload_name" : "lg_analytics_test_drive"   ,
+  "logSourceName" : "Juniper SRX Syslog Logs"  ,
+    "invalidatecache" : true  },      
+{  
+   "directory" : "/home/oracle/gocode/src/oracle-oci/logs/oci-api-gw", 
+    "name" : "apigw1.oracle.com",   
+   "type" : "oci_api_gateway",          
+   "upload_name" : "lg_analytics_test_drive"   ,
+  "logSourceName" : "OCI API Gateway Access Logs"  ,
+    "invalidatecache" : true  },   
+{ 
+   "directory" : "/home/oracle/gocode/src/oracle-oci/logs/oci-vcn-flow", 
+   "name" : "vcn-flow.oracle.com",    
+   "type" : "oci_vcn",               
+    "upload_name" : "lg_analytics_test_drive"   ,
+  "logSourceName" : "OCI VCN Flow Logs"  ,
+    "invalidatecache" : true  },
+]
+}

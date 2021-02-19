@@ -1,0 +1,276 @@
+// Copyright (c) 2016, 2018, 2021, Oracle and/or its affiliates.  All rights reserved.
+// This software is dual-licensed to you under the Universal Permissive License (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl or Apache License 2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose either license.
+
+// Example code for Identity and Access Management Service API
+
+package main
+
+import (
+	"context"
+	"fmt"
+	_ "log"
+	"sync"
+
+	"github.com/oracle/oci-go-sdk/v35/common"
+	"github.com/oracle/oci-go-sdk/v35/example/helpers"
+	"github.com/oracle/oci-go-sdk/v35/identity"
+	"github.com/oracle/oci-go-sdk/v35/loganalytics"
+	"github.com/oracle/oci-go-sdk/v35/managementdashboard"
+)
+
+var (
+	e1 = common.CustomProfileConfigProvider("/home/oracle/.oci/config", "DBSECN")
+)
+
+
+func DeleteManagementSavedSearch  (ManagementSavedSearchId []string ) {
+client, _ := managementdashboard.NewDashxApisClientWithConfigurationProvider(e1)
+
+for i:=0; i< len(ManagementSavedSearchId ); i++ {
+DeleteManagementSavedSearchRequest  := managementdashboard.DeleteManagementSavedSearchRequest {
+ManagementSavedSearchId  : &ManagementSavedSearchId[i] ,
+}
+_, err := client.DeleteManagementSavedSearch(context.Background(), DeleteManagementSavedSearchRequest)
+		if err != nil {
+		fmt.Println("Error DeleteLogAnalyticsEntity:", err)
+		//return
+	}
+}
+}
+
+
+
+
+func ListManagementSavedSearches  (ocid string, ocid_name string ) ([]string){
+client, _ := managementdashboard.NewDashxApisClientWithConfigurationProvider(e1)
+ListManagementSavedSearchesRequest := managementdashboard.ListManagementSavedSearchesRequest {
+CompartmentId : &ocid,
+}
+	var loc_array []string
+resp, _ := client.ListManagementSavedSearches(context.Background(), ListManagementSavedSearchesRequest)
+	for _, v := range resp.Items {
+		loc_array = append(loc_array, *v.Id )
+	}
+	return loc_array
+
+}
+
+func  ListLogAnalyticsLogGroups (ocid string, ocid_name string) ([]string) {
+	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)
+	var namespace = "frnj6sfkc1ep"
+	
+	ListLogAnalyticsLogGroupsRequest  := loganalytics.ListLogAnalyticsLogGroupsRequest {
+			NamespaceName:  &namespace,
+		CompartmentId:  &ocid,
+	}
+	var loc_array []string
+	resp, _ := client.ListLogAnalyticsLogGroups(context.Background(), ListLogAnalyticsLogGroupsRequest)
+	for _, v := range resp.Items {
+		loc_array = append(loc_array, *v.Id )
+	}
+	return loc_array
+}
+
+func  DeleteLogAnalyticsLogGroup (LogAnalyticsLogGroupId []string) {
+	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)
+	var namespace = "frnj6sfkc1ep"
+	for i:=0; i< len(LogAnalyticsLogGroupId); i++ {
+	DeleteLogAnalyticsLogGroupRequest   := loganalytics.DeleteLogAnalyticsLogGroupRequest {
+			NamespaceName:  &namespace,
+		LogAnalyticsLogGroupId :  &LogAnalyticsLogGroupId[i],
+	}
+	
+	_, err := client.DeleteLogAnalyticsLogGroup(context.Background(), DeleteLogAnalyticsLogGroupRequest)
+		if err != nil {
+		fmt.Println("Error DeleteLogAnalyticsLogGroup:", err)
+		}
+	}
+}
+
+
+
+
+
+func  ListUploads()([]string) {
+	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)
+	var namespace = "frnj6sfkc1ep"	
+	ListUploadsRequest  := loganalytics.ListUploadsRequest {
+	NamespaceName : &namespace,
+	}
+	resp, _ := client.ListUploads(context.Background(), ListUploadsRequest)
+	var loc_array []string
+	for _,v := range resp.Items {
+		fmt.Printf("%s %s \n", *v.Reference , *v.Name )
+		loc_array=append(loc_array, *v.Reference)
+	}
+	return loc_array
+}
+
+
+func  DeleteUpload(Ref []string) {
+	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)
+	var namespace = "frnj6sfkc1ep"	
+	for i:=0; i<len(Ref); i++ {
+	DeleteUploadRequest   := loganalytics.DeleteUploadRequest {
+	NamespaceName : &namespace,
+	UploadReference : &Ref[i],
+	}
+	resp, err := client.DeleteUpload(context.Background(), DeleteUploadRequest)
+	if err != nil {
+		fmt.Println("Error DeleteUpload:", err)
+		//return
+	} else {
+	fmt.Printf("%d %d \n", *resp.OpcDeletedLogfileCount  , *resp.OpcDeletedLogCount  )
+	}
+}
+}
+
+
+
+func ListLogAnalyticsEntities(ocid string, ocid_name string) ([]string){
+	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)
+	var namespace = "frnj6sfkc1ep"
+
+	ListLogAnalyticsEntitiesRequest := loganalytics.ListLogAnalyticsEntitiesRequest{
+		NamespaceName:  &namespace,
+		CompartmentId:  &ocid,
+		LifecycleState: "ACTIVE",
+	}
+
+	resp, _ := client.ListLogAnalyticsEntities(context.Background(), ListLogAnalyticsEntitiesRequest)
+	var loc_array []string
+	for _, v := range resp.Items {
+		loc_array = append(loc_array, *v.Id )
+	}
+	return loc_array
+}
+
+func DeleteLogAnalyticsEntity(LogAnalyticsEntityId  []string) {
+	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)
+	var namespace = "frnj6sfkc1ep"
+
+    for i:=0; i< len(LogAnalyticsEntityId); i++ {
+	DeleteLogAnalyticsEntityRequest  := loganalytics.DeleteLogAnalyticsEntityRequest{
+		NamespaceName:  &namespace,
+		LogAnalyticsEntityId:  &LogAnalyticsEntityId[i],
+	}
+
+	_, err := client.DeleteLogAnalyticsEntity(context.Background(), DeleteLogAnalyticsEntityRequest)
+		if err != nil {
+		fmt.Println("Error DeleteLogAnalyticsEntity:", err)
+		//return
+	} else {
+		//fmt.Printf("%s \n", *resp.RawResponse)
+	}
+	}
+}
+
+
+
+func GetNamespace() *string {
+	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)
+
+	var namespace = "frnj6sfkc1ep"
+	GetNamespaceRequest := loganalytics.GetNamespaceRequest{
+		NamespaceName: &namespace,
+	}
+
+	resp, _ := client.GetNamespace(context.Background(), GetNamespaceRequest)
+
+	return resp.Namespace.NamespaceName
+
+}
+
+func ListCompartments(ocid string, ocid_parent string ) ([]string, []string) {
+	c, _ := identity.NewIdentityClientWithConfigurationProvider(e1)
+
+	var CompartmentIdInSubtree = true
+
+	ListCompartmentsRequest := identity.ListCompartmentsRequest{
+		CompartmentId:          &ocid,
+		AccessLevel:            "ANY",
+		CompartmentIdInSubtree: &CompartmentIdInSubtree,
+		LifecycleState:         "ACTIVE",
+	}
+
+	list, _ := c.ListCompartments(context.Background(), ListCompartmentsRequest)
+	fmt.Printf("Nb of ListCompartments : %d\n", len(list.Items))
+	var loc_ocid_arr []string
+	var loc_ocid_name []string
+	for _, v := range list.Items {
+	  if ( ocid_parent == *v.CompartmentId) {
+		loc_ocid_arr = append(loc_ocid_arr, *v.Id)
+		loc_ocid_name = append(loc_ocid_name, *v.Name)
+		}
+	}
+
+	return loc_ocid_arr, loc_ocid_name
+
+}
+
+func ExampleListAvailabilityDomains() {
+	/*
+	   ocid , err := e1.TenancyOCID()
+	   if err != nil {
+	   	fmt.Println("Error ocid:", err)
+	   	return
+	   }
+
+	*/
+	c, err := identity.NewIdentityClientWithConfigurationProvider(e1)
+	helpers.FatalIfError(err)
+
+	// The OCID of the tenancy containing the compartment.
+	tenancyID, err := common.DefaultConfigProvider().TenancyOCID()
+	helpers.FatalIfError(err)
+
+	request := identity.ListAvailabilityDomainsRequest{
+		CompartmentId: &tenancyID,
+	}
+
+	r, err := c.ListAvailabilityDomains(context.Background(), request)
+	helpers.FatalIfError(err)
+	fmt.Printf("Nb of availabilty domains : %d\n", len(r.Items))
+	for i, v := range r.Items {
+		fmt.Printf("domain[%d]:%s\n", i, *v.Name)
+	}
+
+	//log.Printf("list of available domains: %v+", r.Items)
+	//fmt.Println("list available domains completed")
+
+	// Output:
+	// list available domains completed
+}
+
+
+func print_ocid(ocid string, ocid_name string, wg *sync.WaitGroup) {
+
+	//fmt.Printf("start %s\n" ,ocid_name)
+	DeleteLogAnalyticsEntity(ListLogAnalyticsEntities(ocid, ocid_name))
+	DeleteLogAnalyticsLogGroup(ListLogAnalyticsLogGroups(ocid, ocid_name))
+	DeleteManagementSavedSearch(ListManagementSavedSearches(ocid, ocid_name))
+	
+	//fmt.Printf("end %s\n" ,ocid_name)
+	wg.Done()
+	return
+}
+
+func main() {
+	ocid, _ := e1.TenancyOCID()
+//	ExampleListAvailabilityDomains()
+
+	fmt.Printf("%v\n", *GetNamespace())
+	list_ocid, list_ocid_name := ListCompartments(ocid,"ocid1.compartment.oc1..aaaaaaaalatb5qnxqrqh7c3fnuj5q7k4mndh3zw7ctq3hkjdwljl2nlbojga")
+    
+	//DeleteUpload(ListUploads())
+	
+	wg := &sync.WaitGroup{}
+	wg.Add(len(list_ocid))
+
+	for i := 0; i < len(list_ocid); i++ {
+		go print_ocid(list_ocid[i], list_ocid_name[i], wg)
+
+	}
+
+	wg.Wait()
+}
