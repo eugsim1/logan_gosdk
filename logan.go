@@ -37,8 +37,8 @@ var (
 // If you want to recreate all the configurations :
 // 1/ update the entities.json
 // Execute 
+
 // utils.DeleteUpload(utils.ListUploads())
-// utils.DeleteLogAnalyticsLogGroup(utils.ListLogAnalyticsLogGroups(ocid, ocid_name))	
 // utils.DeleteLogAnalyticsLogGroup(utils.ListLogAnalyticsLogGroups(ocid, ocid_name))	
 // loc_list_Entity_Id, _ , _:= utils.ListLogAnalyticsEntities(namespace, ocid, ocid_name)  
 // utils.DeleteLogAnalyticsEntity(namespace, loc_list_Entity_Id)
@@ -46,8 +46,9 @@ var (
 // utils.CreateLogAnalyticsLogGroup(namespace,ocid, ocid_name)
 // utils.CreateLogAnalyticsEntity(namespace, ocid, ocid_name)
 // UploadLogFile(namespace, ocid, utils.ListLogAnalyticsLogGroups(ocid, ocid_name)[0], ocid_name)
-// The below setting are recreating a ready to use LogAn series of compartments with LogGroup, Entitties, Files
-// The Logan Infra is setup with a tf Scrip ( see ref in github)
+
+// The below settings are use to recreate a ready to use LogAn series of compartments with LogGroup, Entitties, Files
+// The Logan Infra is setup with a tf Script ( see ref in github)
 //
 
 
@@ -75,7 +76,7 @@ func process_ocids(namespace string, ocid string, ocid_name string, wg *sync.Wai
 /// The same task can be executed in a serial way ( commented code below)
 /// The entites / files to be uploaded are configured in the entities.json fileName
 /// For every type of file to upload an entry has to be created in this files 
-/// If at the time to use there is not associated entity with the log file in LogAn the last parameter should be false
+/// If at the time to run the scripts  there is not associated entity with the log file in LogAn the last parameter should be false
 /// The upload in paraller way is extremely efficied 500of Mb of day are loaded in 14 compartments in less that 1 minute from a VBox
 /// this code will be improved ...
 /// You need to create an config file for the oci SDK ( instruction are in OCI site) an example is given below
@@ -87,6 +88,7 @@ func process_ocids(namespace string, ocid string, ocid_name string, wg *sync.Wai
 /// fingerprint=XXX
 /// compartment-id=XXX
 /// key_file=XXX
+///
 /// install go, then run => go run logan.go
 /// to make this programm executable 
 /// cd utils go build
@@ -95,14 +97,23 @@ func process_ocids(namespace string, ocid string, ocid_name string, wg *sync.Wai
 
 
 func main() {
+	
 	ocid, _ := e1.TenancyOCID()
+	
 	var list_ocid []string
 	var list_ocid_name []string
-
+	
+        // the second parameter is your "main compartement of Log Analytics
+	// if below there are many others the scrip will take care of all of them
+	//
 	list_ocid, list_ocid_name = utils.ListCompartments(ocid, "ocid1.compartment.oc1..aaaaaaaalatb5qnxqrqh7c3fnuj5q7k4mndh3zw7ctq3hkjdwljl2nlbojga")
 	
 	utils.DeleteUpload(utils.ListUploads())
-
+       
+	// go routine to execute in parallel the config tasks
+	// this makes the whole script to run several conigurations tasks for every compartment
+	// if you dont like this comment the code and execute all the functions on the commented loop below
+	
 	wg := &sync.WaitGroup{}
 	wg.Add(len(list_ocid))
 
