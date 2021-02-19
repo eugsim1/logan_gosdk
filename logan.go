@@ -49,7 +49,7 @@ var (
 // UploadLogFile(namespace, ocid, utils.ListLogAnalyticsLogGroups(ocid, ocid_name)[0], ocid_name)
 
 // The below settings are use to recreate a ready to use LogAn series of compartments with LogGroup, Entitties, Files
-// The Logan Infra is setup with a tf Script ( see ref in github)
+// The Logan Infra is setup with a tf Script ( see this repo https://github.com/eugsim1/logging-analytics-tf-infra )
 //
 
 
