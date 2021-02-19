@@ -118,6 +118,8 @@ func main() {
 	wg := &sync.WaitGroup{}
 	wg.Add(len(list_ocid))
 
+	// for every compartment execute a batch of configs
+	//
 	for i := 0; i < len(list_ocid); i++ {
 		go process_ocids(namespace, list_ocid[i], list_ocid_name[i],  wg)
 	}
