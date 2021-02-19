@@ -19,7 +19,8 @@ import (
  	"sync"
 )
 
-var (
+var (   
+	// use a config file the same that you use for the OCI CLI DBSECN is a particular sub section with the details of the target tenancy
 	e1 = common.CustomProfileConfigProvider("/home/oracle/.oci/config", "DBSECN")
 	namespace = "frnj6sfkc1ep"
 )
@@ -57,7 +58,7 @@ func process_ocids(namespace string, ocid string, ocid_name string, wg *sync.Wai
 	utils.DeleteLogAnalyticsLogGroup(utils.ListLogAnalyticsLogGroups(ocid, ocid_name))	
 	loc_list_Entity_Id, _ , _:= utils.ListLogAnalyticsEntities(namespace, ocid, ocid_name)  
 	utils.DeleteLogAnalyticsEntity(namespace, loc_list_Entity_Id)
-    utils.DeleteManagementSavedSearch(utils.ListManagementSavedSearches(ocid, ocid_name))	
+        utils.DeleteManagementSavedSearch(utils.ListManagementSavedSearches(ocid, ocid_name))	
 //	
  	utils.CreateLogAnalyticsLogGroup(namespace,ocid, ocid_name)
  	utils.CreateLogAnalyticsEntity(namespace, ocid, ocid_name)
