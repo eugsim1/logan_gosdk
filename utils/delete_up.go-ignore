@@ -1,0 +1,43 @@
+// Deletes a specific log file inside an upload by upload file reference
+func DeleteUploadFile(namespace string, namefile string ) {
+	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)
+	var DeleteUploadFileRequest loganalytics.DeleteUploadFileRequest
+	
+		type Entity struct {
+		Directory           string `json:"directory"`
+		Name                string `json:"name"`
+		Type                string `json:"type"`
+		Upload_Name         string `json:"upload_name"`
+		LogSourceName       string `json:"logSourceName"`
+		Invalidatecache     bool   `json:"invalidatecache"`
+		Associate_with_type bool   `json:"associate_with_type"`
+	}
+
+	type Entities struct {
+		Entities []Entity `json:"entities"`
+	}
+
+	jsonFile, err := os.Open("entities.json")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var entities Entities
+	if err := json.Unmarshal(byteValue, &entities); err != nil {
+		panic(err)
+	}
+ListUploads(namespace,"db1")
+DeleteUploadFileRequest = loganalytics.DeleteUploadFileRequest  {
+NamespaceName : &namespace,
+UploadReference : 
+FileReference  :
+}
+
+}

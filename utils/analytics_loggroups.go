@@ -1,17 +1,14 @@
 package utils
 
 import (
-    "fmt"
-	"context"	
-	_"github.com/oracle/oci-go-sdk/v35/common"	
-	_"github.com/oracle/oci-go-sdk/v35/identity"
-	_"github.com/oracle/oci-go-sdk/v35/loganalytics"
-	_"github.com/oracle/oci-go-sdk/v35/managementdashboard"
-	"github.com/oracle/oci-go-sdk/v35/loganalytics"	
+	"context"
+	"fmt"
+	_ "github.com/oracle/oci-go-sdk/v35/common"
+	_ "github.com/oracle/oci-go-sdk/v35/identity"
+	"github.com/oracle/oci-go-sdk/v35/loganalytics"
+	_ "github.com/oracle/oci-go-sdk/v35/loganalytics"
+	_ "github.com/oracle/oci-go-sdk/v35/managementdashboard"
 )
-
-
-
 
 func ListLogAnalyticsLogGroups(ocid string, ocid_name string) []string {
 	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)
@@ -29,28 +26,26 @@ func ListLogAnalyticsLogGroups(ocid string, ocid_name string) []string {
 	return loc_array
 }
 
-func CreateLogAnalyticsLogGroup(namespace  string,ocid string, ocid_name string) {
+func CreateLogAnalyticsLogGroup(namespace string, ocid string, ocid_name string) {
 	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)
 
-
-		var DisplayName string = ocid_name + "LogGroup"
-		var Description string = "test description"
-		LogAnalyticsLogGroupDetails := loganalytics.CreateLogAnalyticsLogGroupRequest{
-			NamespaceName: &namespace,
-			CreateLogAnalyticsLogGroupDetails: loganalytics.CreateLogAnalyticsLogGroupDetails{
-				DisplayName:   &DisplayName,
-				CompartmentId: &ocid,
-				Description:   &Description,
-				FreeformTags: map[string]string{
-					"Project":     "log_analytics",
-					"Role":        "log_analytics for HOL ",
-					"Comment":     "log_analytics setup for HOL ",
-					"Version":     "0.0.0.0",
-					"Responsible": "Eugene Simos",
-					"agent":       "oci sdk go"},
-			},
-		}
-
+	var DisplayName string = ocid_name + "LogGroup"
+	var Description string = "test description"
+	LogAnalyticsLogGroupDetails := loganalytics.CreateLogAnalyticsLogGroupRequest{
+		NamespaceName: &namespace,
+		CreateLogAnalyticsLogGroupDetails: loganalytics.CreateLogAnalyticsLogGroupDetails{
+			DisplayName:   &DisplayName,
+			CompartmentId: &ocid,
+			Description:   &Description,
+			FreeformTags: map[string]string{
+				"Project":     "log_analytics",
+				"Role":        "log_analytics for HOL ",
+				"Comment":     "log_analytics setup for HOL ",
+				"Version":     "0.0.0.0",
+				"Responsible": "Eugene Simos",
+				"agent":       "oci sdk go"},
+		},
+	}
 
 	_, err := client.CreateLogAnalyticsLogGroup(context.Background(), LogAnalyticsLogGroupDetails)
 	if err != nil {
@@ -58,7 +53,6 @@ func CreateLogAnalyticsLogGroup(namespace  string,ocid string, ocid_name string)
 	}
 
 }
-
 
 func DeleteLogAnalyticsLogGroup(LogAnalyticsLogGroupId []string) {
 	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)

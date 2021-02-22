@@ -1,19 +1,17 @@
 package utils
 
 import (
-    "fmt"
-	"context"	
-	"github.com/oracle/oci-go-sdk/v35/common"	
-	_"github.com/oracle/oci-go-sdk/v35/identity"
-	_"github.com/oracle/oci-go-sdk/v35/loganalytics"
+	"context"
+	"fmt"
+	"github.com/oracle/oci-go-sdk/v35/common"
+	_ "github.com/oracle/oci-go-sdk/v35/identity"
+	_ "github.com/oracle/oci-go-sdk/v35/loganalytics"
 	"github.com/oracle/oci-go-sdk/v35/managementdashboard"
 )
 
 var (
 	e1 = common.CustomProfileConfigProvider("/home/oracle/.oci/config", "DBSECN")
 )
-
-
 
 func DeleteManagementSavedSearch(ManagementSavedSearchId []string) {
 	client, _ := managementdashboard.NewDashxApisClientWithConfigurationProvider(e1)

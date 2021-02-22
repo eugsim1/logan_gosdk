@@ -1,15 +1,14 @@
 package utils
 
 import (
-    "fmt"
 	"context"
+	"fmt"
+	"github.com/oracle/oci-go-sdk/v35/common"
 	"github.com/oracle/oci-go-sdk/v35/identity"
-	"github.com/oracle/oci-go-sdk/v35/common"		
+	"github.com/oracle/oci-go-sdk/v35/loganalytics"
 	"logan/helpers"
-	"github.com/oracle/oci-go-sdk/v35/loganalytics"	
 )
 
-	
 func ListCompartments(ocid string, ocid_parent string) ([]string, []string) {
 	c, _ := identity.NewIdentityClientWithConfigurationProvider(e1)
 
@@ -24,12 +23,12 @@ func ListCompartments(ocid string, ocid_parent string) ([]string, []string) {
 
 	list, _ := c.ListCompartments(context.Background(), ListCompartmentsRequest)
 	fmt.Printf("Nb of ListCompartments : %d\n", len(list.Items))
-	
+
 	var loc_ocid_arr []string
 	var loc_ocid_name []string
 	for _, v := range list.Items {
-			loc_ocid_arr = append(loc_ocid_arr, *v.Id)
-			loc_ocid_name = append(loc_ocid_name, *v.Name)
+		loc_ocid_arr = append(loc_ocid_arr, *v.Id)
+		loc_ocid_name = append(loc_ocid_name, *v.Name)
 	}
 
 	return loc_ocid_arr, loc_ocid_name
@@ -61,8 +60,6 @@ func ExampleListAvailabilityDomains() {
 	// Output:
 	// list available domains completed
 }
-
-
 
 func GetNamespace() *string {
 	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)

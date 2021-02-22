@@ -1,21 +1,20 @@
 package utils
 
 import (
-    "fmt"
-	"context"	
-	_"github.com/oracle/oci-go-sdk/v35/common"	
-	_"github.com/oracle/oci-go-sdk/v35/identity"
-	_"github.com/oracle/oci-go-sdk/v35/loganalytics"
-	_"github.com/oracle/oci-go-sdk/v35/managementdashboard"
-	"github.com/oracle/oci-go-sdk/v35/loganalytics"	
+	"context"
+	"encoding/json"
+	"fmt"
+	_ "github.com/oracle/oci-go-sdk/v35/common"
+	_ "github.com/oracle/oci-go-sdk/v35/identity"
+	"github.com/oracle/oci-go-sdk/v35/loganalytics"
+	_ "github.com/oracle/oci-go-sdk/v35/loganalytics"
+	_ "github.com/oracle/oci-go-sdk/v35/managementdashboard"
+	"io/ioutil"
 	"os"
-		"io/ioutil"
-	"encoding/json"		
 )
 
-func ListLogAnalyticsEntities(namespace string, ocid string, ocid_name string)  (Id []string, Name []string , M map[string]string) {
+func ListLogAnalyticsEntities(namespace string, ocid string, ocid_name string) (Id []string, Name []string, M map[string]string) {
 	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)
-
 
 	ListLogAnalyticsEntitiesRequest := loganalytics.ListLogAnalyticsEntitiesRequest{
 		NamespaceName:  &namespace,
@@ -26,20 +25,17 @@ func ListLogAnalyticsEntities(namespace string, ocid string, ocid_name string)  
 	resp, _ := client.ListLogAnalyticsEntities(context.Background(), ListLogAnalyticsEntitiesRequest)
 	var loc_array []string
 	var loc_array_name []string
-    var m = make(map[string]string)
+	var m = make(map[string]string)
 	for _, v := range resp.Items {
 		loc_array = append(loc_array, *v.Id)
 		loc_array_name = append(loc_array_name, *v.Name)
 		m[*v.Name] = *v.Id
 	}
-	return loc_array, loc_array_name , m
+	return loc_array, loc_array_name, m
 }
 
-
-
-func CreateLogAnalyticsEntity(namespace string,ocid string, ocid_name string) {
+func CreateLogAnalyticsEntity(namespace string, ocid string, ocid_name string) {
 	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)
-
 
 	type Entity struct {
 		Directory       string `json:"directory"`
@@ -73,8 +69,8 @@ func CreateLogAnalyticsEntity(namespace string,ocid string, ocid_name string) {
 	//fmt.Printf("%d\n", len(entities.Entities))
 
 	for i := 0; i < len(entities.Entities); i++ {
-        Entity_name := entities.Entities[i].Name + "-" + ocid_name
-		fmt.Printf("%s\n",Entity_name)
+		Entity_name := entities.Entities[i].Name + "-" + ocid_name
+		fmt.Printf("%s\n", Entity_name)
 		CreateLogAnalyticsEntityRequest := loganalytics.CreateLogAnalyticsEntityRequest{
 			NamespaceName: &namespace,
 			CreateLogAnalyticsEntityDetails: loganalytics.CreateLogAnalyticsEntityDetails{
@@ -95,10 +91,8 @@ func CreateLogAnalyticsEntity(namespace string,ocid string, ocid_name string) {
 
 }
 
-
 func DeleteLogAnalyticsEntity(namespace string, LogAnalyticsEntityId []string) {
 	client, _ := loganalytics.NewLogAnalyticsClientWithConfigurationProvider(e1)
- 
 
 	for i := 0; i < len(LogAnalyticsEntityId); i++ {
 		DeleteLogAnalyticsEntityRequest := loganalytics.DeleteLogAnalyticsEntityRequest{
